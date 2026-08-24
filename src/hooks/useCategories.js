@@ -1,6 +1,6 @@
 
 import { useCallback, useEffect, useState } from "react";
-import { getAll, create, update } from "../services/category.service";
+import { getAll, create, update, deleteCategory } from "../services/category.service";
 
 export const useCategories = () => {
     const [categories, setCategories] = useState([]);
@@ -33,5 +33,10 @@ export const useCategories = () => {
         await fetchCategories();
     }
 
-    return { categories, loading, addCategory, editCategory };
+    const removeCategory = async (id) => {
+        await deleteCategory(id);
+        await fetchCategories();
+    };
+
+    return { categories, loading, addCategory, editCategory, removeCategory };
 };

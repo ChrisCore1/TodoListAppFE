@@ -3,7 +3,7 @@ import { useCategories } from "../hooks/useCategories";
 import { Modal } from "../components/Modal";
 
 export const CategoryManagement = () => {
-    const { categories, loading, addCategory, editCategory } = useCategories();
+    const { categories, loading, addCategory, editCategory, removeCategory } = useCategories();
     const [modalState, setModalState] = useState({ isOpen: false, type: 'none' });
     const [formData, setFormData] = useState({ name_category: '' });
     const [editingId, setEditingId] = useState(null);
@@ -38,6 +38,17 @@ export const CategoryManagement = () => {
         }
         closeModal();
     };
+
+    const handleDelete = async (id) => {
+        if(window.confirm('Esta usted seguro de eliminar esta categoria?')){
+            try{
+                await removeCategory(id);
+            }catch (e){
+                alert('Ocurrio un error al eliminar esta categoria');
+                console.error(e);
+            }
+        }
+    };
     
     if(loading) return <div className="text-center mt-5"><div className="spinner-border text-primary" /></div>;
 
@@ -69,7 +80,7 @@ export const CategoryManagement = () => {
                                         <td className="text-end px-4">
                                             <button className="btn btn-sm btn-outline-info me-2"><i className="bi bi-eye-fill"></i> Ver</button>
                                             <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => openFormModal(category)}><i className="bi bi-pen-fill"></i> Editar</button>
-                                            <button className="btn btn-sm btn-outline-danger"><i className="bi bi-trash3-fill"></i> Eliminar</button>
+                                            <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(category.category_id)}><i className="bi bi-trash3-fill"></i> Eliminar</button>
                                         </td>
                                     </tr>
                                 ))}
