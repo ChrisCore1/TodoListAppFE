@@ -1,8 +1,33 @@
 import { useState } from "react";
 import { useCategories } from "../hooks/useCategories";
+import { Modal } from "../components/Modal";
 
 export const CategoryManagement = () => {
-    const { categories, loading } = useCategories();
+    const { categories, loading, addCategory } = useCategories();
+    const [modalState, setModalState] = useState({ isOpen: false, type: 'none' });
+    const [formData, setFormData] = useState({ name_category: '' });
+
+    const openFormModal = (category = null) => {
+        if(category) {
+            setFormData({ name_category: category.name_category });
+        }else{
+            setFormData({ name_category: '' });
+        }
+        setModalState({ isOpen: true, type: 'form' });
+    };
+
+    const closeModal = () => {
+        setModalState({ isOpen: false, type: 'none' });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if(!formData.name_category.trim()) return alert('El nombre de la categoria es obligatorio');
+
+        await addCategory(formData);
+
+        closeModal();
+    };
     
     if(loading) return <div className="text-center mt-5"><div className="spinner-border text-primary" /></div>;
 
@@ -11,6 +36,9 @@ export const CategoryManagement = () => {
             <div className="row justify-content-center mb-4">
                 <div className="col-md-10 d-flex justify-content-between align-items-center">
                     <h2 className="mb-0">Lista de Categorias</h2>
+                        <button className="btn btn-primary" onClick={() => openFormModal()}>
+                        + Nueva Categoría
+                    </button>
                 </div>
             </div>
             
@@ -40,7 +68,27 @@ export const CategoryManagement = () => {
                     </div>
                 </div>
             </div>
-
+            <Modal 
+                isOpen={modalState.isOpen && modalState.type === 'form'} 
+                title={'Crear Categoría'} 
+                onClose={closeModal}
+            >
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-3">
+                        <label className="form-label">Nombre</label>
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            onChange={(e) => setFormData({ name_category: e.target.value })} 
+                            autoFocus
+                        />
+                    </div>
+                    <div className="d-flex justify-content-end">
+                        <button type="button" className="btn btn-secondary me-2" onClick={closeModal}>Cancelar</button>
+                        <button type="submit" className="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </Modal>
         </div>
     );
 };

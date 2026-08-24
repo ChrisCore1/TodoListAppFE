@@ -1,6 +1,6 @@
 
 import { useCallback, useEffect, useState } from "react";
-import { getAll } from "../services/category.service";
+import { getAll, create } from "../services/category.service";
 
 export const useCategories = () => {
     const [categories, setCategories] = useState([]);
@@ -23,5 +23,10 @@ export const useCategories = () => {
         fetchCategories();
     }, [fetchCategories]);
 
-    return { categories, loading };
+    const addCategory = async (categoryData) => {
+        await create(categoryData);
+        await fetchCategories();
+    };
+
+    return { categories, loading, addCategory };
 };
