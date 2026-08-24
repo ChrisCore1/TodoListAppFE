@@ -17,3 +17,12 @@ export const create = async (categoryData) => {
     });
     return handleResponse(response);
 };
+
+export const update = async (id, categoryData) => {
+    const response = await fetch(`${API_URL}/categories/${id}`, {
+        method: 'PUT',
+        headers: HEADERS,
+        body: JSON.stringify(categoryData),
+    });
+    return handleResponse(response);
+};
