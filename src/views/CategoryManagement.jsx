@@ -3,14 +3,17 @@ import { useCategories } from "../hooks/useCategories";
 import { Modal } from "../components/Modal";
 
 export const CategoryManagement = () => {
-    const { categories, loading, addCategory } = useCategories();
+    const { categories, loading, addCategory, editCategory } = useCategories();
     const [modalState, setModalState] = useState({ isOpen: false, type: 'none' });
     const [formData, setFormData] = useState({ name_category: '' });
+    const [editingId, setEditingId] = useState(null);
 
     const openFormModal = (category = null) => {
         if(category) {
+            setEditingId(category.category_id);
             setFormData({ name_category: category.name_category });
         }else{
+            setEditingId(null);
             setFormData({ name_category: '' });
         }
         setModalState({ isOpen: true, type: 'form' });
@@ -24,8 +27,15 @@ export const CategoryManagement = () => {
         e.preventDefault();
         if(!formData.name_category.trim()) return alert('El nombre de la categoria es obligatorio');
 
-        await addCategory(formData);
-
+        try{
+            if(editingId){
+                await editCategory(editingId, formData);
+            }else{
+                await addCategory(formData);
+            }
+        }catch (e){
+            alert('Error al guardar la categoria');
+        }
         closeModal();
     };
     
@@ -58,7 +68,7 @@ export const CategoryManagement = () => {
                                         <td className="align-middle fw-medium">{category.name_category}</td>
                                         <td className="text-end px-4">
                                             <button className="btn btn-sm btn-outline-info me-2"><i className="bi bi-eye-fill"></i> Ver</button>
-                                            <button className="btn btn-sm btn-outline-secondary me-2"><i className="bi bi-pen-fill"></i> Editar</button>
+                                            <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => openFormModal(category)}><i className="bi bi-pen-fill"></i> Editar</button>
                                             <button className="btn btn-sm btn-outline-danger"><i className="bi bi-trash3-fill"></i> Eliminar</button>
                                         </td>
                                     </tr>
@@ -70,7 +80,7 @@ export const CategoryManagement = () => {
             </div>
             <Modal 
                 isOpen={modalState.isOpen && modalState.type === 'form'} 
-                title={'Crear Categoría'} 
+                title={editingId ? 'Editar Categoria' : 'Crear Categoría'} 
                 onClose={closeModal}
             >
                 <form onSubmit={handleSubmit}>
@@ -79,6 +89,7 @@ export const CategoryManagement = () => {
                         <input 
                             type="text" 
                             className="form-control" 
+                            value={formData.name_category}
                             onChange={(e) => setFormData({ name_category: e.target.value })} 
                             autoFocus
                         />
