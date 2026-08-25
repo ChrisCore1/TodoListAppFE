@@ -26,3 +26,11 @@ export const update = async (id, categoryData) => {
     });
     return handleResponse(response);
 };
+
+export const deleteCategory = async (id) => {
+    const response = await fetch(`${API_URL}/categories/${id}`, {
+        method: 'DELETE',
+        headers: HEADERS,
+    });
+    return handleResponse(response);
+};
