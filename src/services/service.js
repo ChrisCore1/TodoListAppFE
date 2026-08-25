@@ -11,12 +11,10 @@ const handleResponse = async (response) => {
             const errorData = await response.json().catch(() => ({
                 message: 'No se logro parsear la respuesta de Error'
             }));
-            console.error('Error en API: ', errorData);
             throw new Error(`Error en la peticion: ${response.statusText}`);
         }
         return await response.json();
     }catch(e){
-        console.error('Error', e);
         throw e;
     }
 };
