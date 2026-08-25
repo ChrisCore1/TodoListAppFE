@@ -3,10 +3,11 @@ import { useCategories } from "../hooks/useCategories";
 import { Modal } from "../components/Modal";
 
 export const CategoryManagement = () => {
-    const { categories, loading, addCategory, editCategory, removeCategory } = useCategories();
+    const { categories, loading, addCategory, editCategory, removeCategory, getCategoryDetails } = useCategories();
     const [modalState, setModalState] = useState({ isOpen: false, type: 'none' });
     const [formData, setFormData] = useState({ name_category: '' });
     const [editingId, setEditingId] = useState(null);
+    const [detailCategory, setDetailCategory] = useState(null);
 
     const openFormModal = (category = null) => {
         if(category) {
@@ -17,6 +18,17 @@ export const CategoryManagement = () => {
             setFormData({ name_category: '' });
         }
         setModalState({ isOpen: true, type: 'form' });
+    };
+
+    const openDetailModal = async (id) => {
+        try{
+            const details = await getCategoryDetails(id);
+            setDetailCategory(details);
+            setModalState({ isOpen: true, type: 'detail' });
+        }catch(e){
+            alert('No se logro cargar la informacion de la categoria');
+            console.error(e);
+        }
     };
 
     const closeModal = () => {
@@ -78,7 +90,7 @@ export const CategoryManagement = () => {
                                     <tr key={category.category_id}>
                                         <td className="align-middle fw-medium">{category.name_category}</td>
                                         <td className="text-end px-4">
-                                            <button className="btn btn-sm btn-outline-info me-2"><i className="bi bi-eye-fill"></i> Ver</button>
+                                            <button className="btn btn-sm btn-outline-info me-2" onClick={() => openDetailModal(category.category_id)}><i className="bi bi-eye-fill"></i> Ver</button>
                                             <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => openFormModal(category)}><i className="bi bi-pen-fill"></i> Editar</button>
                                             <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(category.category_id)}><i className="bi bi-trash3-fill"></i> Eliminar</button>
                                         </td>
@@ -110,6 +122,21 @@ export const CategoryManagement = () => {
                         <button type="submit" className="btn btn-primary">Guardar</button>
                     </div>
                 </form>
+            </Modal>
+
+            <Modal 
+                isOpen={modalState.isOpen && modalState.type === 'detail'} 
+                title="Informacion de la Categoria" 
+                onClose={closeModal}
+            >
+                {detailCategory ? (
+                    <div>
+                        <p><i class="bi bi-pin-fill"></i><strong> ID:</strong> {detailCategory.category_id}</p>
+                        <p><i class="bi bi-bookmark-star-fill"></i><strong> Nombre:</strong> {detailCategory.name_category}</p>
+                    </div>
+                ) : (
+                    <div className="text-center"><div className="spinner-border spinner-border-sm" /></div>
+                )}
             </Modal>
         </div>
     );

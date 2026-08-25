@@ -34,3 +34,12 @@ export const deleteCategory = async (id) => {
     });
     return handleResponse(response);
 };
+
+export const getOne = async (id) => {
+    const response = await fetch(`${API_URL}/categories/${id}`, {
+        method: 'GET',
+        headers: HEADERS,
+    });
+    const data = await handleResponse(response);
+    return data.category || data;
+};
