@@ -35,7 +35,6 @@ export const CategoryManagement = () => {
             }
         }catch (e){
             alert('Error al guardar la categoria');
-            console.error(e);
         }
         closeModal();
     };
