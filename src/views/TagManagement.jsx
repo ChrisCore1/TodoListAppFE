@@ -3,15 +3,26 @@ import { useTags } from "../hooks/useTags";
 import { Modal } from "../components/Modal";
 
 export const TagManagement = () => {
-    const { tags, loading, addTag } = useTags();
+    const { tags, loading, addTag, getTagDetails } = useTags();
     const [modalState, setModalState] = useState({ isOpen: false, type: 'none' });
     const [formData, setFormData] = useState({ name_tag: '' });
+    const [detailTag, setDetailTag] = useState(null);
 
     const openFormModal = (tag = null) => {
 
         setFormData({ name_tag: '' });
 
         setModalState({ isOpen: true, type: 'form' });
+    };
+
+    const openDetailModal = async (id) => {
+        try{
+            const details = await getTagDetails(id);
+            setDetailTag(details);
+            setModalState({ isOpen: true, type: 'detail' });
+        }catch{
+            alert('No se logro cargar la informacion de la etiqueta');
+        }
     };
 
     const closeModal = () => {
@@ -56,9 +67,9 @@ export const TagManagement = () => {
                             <tbody>
                                 {tags.map(tag => (
                                     <tr key={tag.tag_id}>
-                                        <td className="align-middle fw-medium">{tag.name_tag}</td>
+                                        <td className="align-middle fw-medium"><i className="bi bi-tags-fill"></i> {tag.name_tag}</td>
                                         <td className="text-end px-4">
-                                            <button className="btn btn-sm btn-outline-info me-2"><i className="bi bi-eye-fill"></i> Ver</button>
+                                            <button className="btn btn-sm btn-outline-info me-2" onClick={() => openDetailModal(tag.tag_id)}><i className="bi bi-eye-fill"></i> Ver</button>
                                             <button className="btn btn-sm btn-outline-secondary me-2"><i className="bi bi-pen-fill"></i> Editar</button>
                                             <button className="btn btn-sm btn-outline-danger"><i className="bi bi-trash3-fill"></i> Eliminar</button>
                                         </td>
@@ -89,6 +100,21 @@ export const TagManagement = () => {
                         <button type="submit" className="btn btn-primary">Guardar</button>
                     </div>
                 </form>
+            </Modal>
+
+            <Modal 
+                isOpen={modalState.isOpen && modalState.type === 'detail'} 
+                title="Informacion de la Etiqueta" 
+                onClose={closeModal}
+            >
+                {detailTag ? (
+                    <div>
+                        <p><i className="bi bi-pin-fill"></i><strong> ID:</strong> {detailTag.tag_id}</p>
+                        <p><i className="bi bi-tags-fill"></i><strong> Nombre:</strong> {detailTag.name_tag}</p>
+                    </div>
+                ) : (
+                    <div className="text-center"><div className="spinner-border spinner-border-sm" /></div>
+                )}
             </Modal>
         </div>
     );

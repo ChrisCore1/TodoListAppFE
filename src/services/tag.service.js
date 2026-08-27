@@ -17,3 +17,12 @@ export const create = async (tagData) => {
     });
     return handleResponse(response);
 };
+
+export const getOne = async (id) => {
+    const response = await fetch(`${API_URL}/tags/${id}`, {
+        method: 'GET',
+        headers: HEADERS
+    });
+    const data = await handleResponse(response);
+    return data.tag || data;
+};
