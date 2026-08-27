@@ -3,7 +3,7 @@ import { useTags } from "../hooks/useTags";
 import { Modal } from "../components/Modal";
 
 export const TagManagement = () => {
-    const { tags, loading, addTag, getTagDetails, editTag } = useTags();
+    const { tags, loading, addTag, getTagDetails, editTag, removeTag } = useTags();
     const [modalState, setModalState] = useState({ isOpen: false, type: 'none' });
     const [formData, setFormData] = useState({ name_tag: '' });
     const [detailTag, setDetailTag] = useState(null);
@@ -50,6 +50,16 @@ export const TagManagement = () => {
         closeModal();
     };
 
+    const handleDelete = async (id) => {
+        if(window.confirm('Esta usted seguro de eliminar esta etiqueta?')) {
+            try{
+                await removeTag(id);
+            }catch{
+                alert('Ocurrio un error al eliminar esta etiqueta');
+            }
+        }
+    };
+
     if(loading) return <div className="text-center mt-5"><div className="spinner-border text-primary" /></div>;
 
     return (
@@ -80,7 +90,7 @@ export const TagManagement = () => {
                                         <td className="text-end px-4">
                                             <button className="btn btn-sm btn-outline-info me-2" onClick={() => openDetailModal(tag.tag_id)}><i className="bi bi-eye-fill"></i> Ver</button>
                                             <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => openFormModal(tag)}><i className="bi bi-pen-fill"></i> Editar</button>
-                                            <button className="btn btn-sm btn-outline-danger"><i className="bi bi-trash3-fill"></i> Eliminar</button>
+                                            <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(tag.tag_id)}><i className="bi bi-trash3-fill"></i> Eliminar</button>
                                         </td>
                                     </tr>
                                 ))}

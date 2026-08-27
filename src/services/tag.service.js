@@ -35,3 +35,12 @@ export const update = async (id, tagData) => {
     });
     return handleResponse(response);
 };
+
+export const deleteTag = async (id) => {
+    const response = await fetch(`${API_URL}/tags/${id}`, {
+        method: 'DELETE',
+        headers: HEADERS,
+    });
+    const data = await handleResponse(response);
+    return data.tag || data;
+};
