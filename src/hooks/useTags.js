@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { getAll } from '../services/tag.service';
+import { getAll, create } from '../services/tag.service';
 
 export const useTags = () => {
     const [tags, setTags] = useState([]);
@@ -21,5 +21,10 @@ export const useTags = () => {
         fetchTags();
     }, [fetchTags]);
 
-    return { tags, loading };
+    const addTag = async (tagData) => {
+        await create(tagData);
+        await fetchTags();
+    };
+
+    return { tags, loading, addTag };
 };

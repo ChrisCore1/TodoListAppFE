@@ -1,8 +1,34 @@
 import { useState } from "react";
 import { useTags } from "../hooks/useTags";
+import { Modal } from "../components/Modal";
 
 export const TagManagement = () => {
-    const { tags, loading } = useTags();
+    const { tags, loading, addTag } = useTags();
+    const [modalState, setModalState] = useState({ isOpen: false, type: 'none' });
+    const [formData, setFormData] = useState({ name_tag: '' });
+
+    const openFormModal = (tag = null) => {
+
+        setFormData({ name_tag: '' });
+
+        setModalState({ isOpen: true, type: 'form' });
+    };
+
+    const closeModal = () => {
+        setModalState({ isOpen: false, type: 'none' });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if(!formData.name_tag.trim()) return alert('El nombre de la etiqueta es obligatorio');
+
+        try{
+            await addTag(formData);
+        }catch{
+            alert('Error al guardar la etiqueta');
+        }
+        closeModal();
+    };
 
     if(loading) return <div className="text-center mt-5"><div className="spinner-border text-primary" /></div>;
 
@@ -11,6 +37,9 @@ export const TagManagement = () => {
             <div className="row justify-content-center mb-4">
                 <div className="col-md-10 d-flex justify-content-between align-items-center">
                     <h2 className="mb-0">Lista de Etiquetas</h2>
+                    <button className="btn btn-primary" onClick={() => openFormModal()}>
+                        + Nueva Etiqueta
+                    </button>
                 </div>
             </div>
 
@@ -40,6 +69,27 @@ export const TagManagement = () => {
                     </div>
                 </div>
             </div>
+            <Modal 
+                isOpen={modalState.isOpen && modalState.type === 'form'} 
+                title={'Crear Etiqueta'} 
+                onClose={closeModal}
+            >
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-3">
+                        <label className="form-label">Nombre</label>
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            onChange={(e) => setFormData({ name_tag: e.target.value })} 
+                            autoFocus
+                        />
+                    </div>
+                    <div className="d-flex justify-content-end">
+                        <button type="button" className="btn btn-secondary me-2" onClick={closeModal}>Cancelar</button>
+                        <button type="submit" className="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </Modal>
         </div>
     );
 };

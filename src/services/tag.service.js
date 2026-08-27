@@ -8,3 +8,12 @@ export const getAll = async () => {
     const data = await handleResponse(response);
     return data.tags?.data || data;
 };
+
+export const create = async (tagData) => {
+    const response = await fetch(`${API_URL}/tags`, {
+        method: 'POST',
+        headers: HEADERS,
+        body: JSON.stringify(tagData),
+    });
+    return handleResponse(response);
+};
