@@ -1,4 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL;
+const URL_TAG = `${API_URL}/tags`;
 
 const HEADERS = {
     'Content-Type': 'application/json',
@@ -19,4 +20,4 @@ const handleResponse = async (response) => {
     }
 };
 
-export { API_URL, HEADERS, handleResponse };
+export { API_URL, HEADERS, handleResponse, URL_TAG };
