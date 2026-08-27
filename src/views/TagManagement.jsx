@@ -1,17 +1,22 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import { useTags } from "../hooks/useTags";
 import { Modal } from "../components/Modal";
 
 export const TagManagement = () => {
-    const { tags, loading, addTag, getTagDetails } = useTags();
+    const { tags, loading, addTag, getTagDetails, editTag } = useTags();
     const [modalState, setModalState] = useState({ isOpen: false, type: 'none' });
     const [formData, setFormData] = useState({ name_tag: '' });
     const [detailTag, setDetailTag] = useState(null);
+    const [editingId, setEditingId] = useState(null);
 
     const openFormModal = (tag = null) => {
-
-        setFormData({ name_tag: '' });
-
+        if(tag){
+            setEditingId(tag.tag_id);
+            setFormData({ name_tag: tag.name_tag });
+        }else{
+            setEditingId(null);
+            setFormData({ name_tag: '' });
+        }
         setModalState({ isOpen: true, type: 'form' });
     };
 
@@ -34,7 +39,11 @@ export const TagManagement = () => {
         if(!formData.name_tag.trim()) return alert('El nombre de la etiqueta es obligatorio');
 
         try{
-            await addTag(formData);
+            if(editingId){
+                await editTag(editingId, formData);
+            }else{
+                await addTag(formData);
+            }
         }catch{
             alert('Error al guardar la etiqueta');
         }
@@ -70,7 +79,7 @@ export const TagManagement = () => {
                                         <td className="align-middle fw-medium"><i className="bi bi-tags-fill"></i> {tag.name_tag}</td>
                                         <td className="text-end px-4">
                                             <button className="btn btn-sm btn-outline-info me-2" onClick={() => openDetailModal(tag.tag_id)}><i className="bi bi-eye-fill"></i> Ver</button>
-                                            <button className="btn btn-sm btn-outline-secondary me-2"><i className="bi bi-pen-fill"></i> Editar</button>
+                                            <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => openFormModal(tag)}><i className="bi bi-pen-fill"></i> Editar</button>
                                             <button className="btn btn-sm btn-outline-danger"><i className="bi bi-trash3-fill"></i> Eliminar</button>
                                         </td>
                                     </tr>
@@ -82,7 +91,7 @@ export const TagManagement = () => {
             </div>
             <Modal 
                 isOpen={modalState.isOpen && modalState.type === 'form'} 
-                title={'Crear Etiqueta'} 
+                title={editingId ? 'Editar Categoria' : 'Crear Etiqueta'} 
                 onClose={closeModal}
             >
                 <form onSubmit={handleSubmit}>
@@ -91,6 +100,7 @@ export const TagManagement = () => {
                         <input 
                             type="text" 
                             className="form-control" 
+                            value={formData.name_tag}
                             onChange={(e) => setFormData({ name_tag: e.target.value })} 
                             autoFocus
                         />

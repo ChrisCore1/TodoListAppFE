@@ -26,3 +26,12 @@ export const getOne = async (id) => {
     const data = await handleResponse(response);
     return data.tag || data;
 };
+
+export const update = async (id, tagData) => {
+    const response = await fetch(`${API_URL}/tags/${id}`, {
+        method: 'PUT',
+        headers: HEADERS,
+        body: JSON.stringify(tagData),
+    });
+    return handleResponse(response);
+};
