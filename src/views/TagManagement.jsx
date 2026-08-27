@@ -8,6 +8,7 @@ export const TagManagement = () => {
     const [formData, setFormData] = useState({ name_tag: '' });
     const [detailTag, setDetailTag] = useState(null);
     const [editingId, setEditingId] = useState(null);
+    const [tagDelete, setTagDelete] = useState(null);
 
     const openFormModal = (tag = null) => {
         if(tag){
@@ -30,6 +31,11 @@ export const TagManagement = () => {
         }
     };
 
+    const openConfirmModal = (tag) => {
+        setTagDelete(tag);
+        setModalState({ isOpen: true, type: 'delete' })
+    };
+
     const closeModal = () => {
         setModalState({ isOpen: false, type: 'none' });
     };
@@ -50,13 +56,13 @@ export const TagManagement = () => {
         closeModal();
     };
 
-    const handleDelete = async (id) => {
-        if(window.confirm('Esta usted seguro de eliminar esta etiqueta?')) {
-            try{
-                await removeTag(id);
-            }catch{
-                alert('Ocurrio un error al eliminar esta etiqueta');
-            }
+    const handleDelete = async () => {
+        if(!tagDelete) return;
+        try{
+            await removeTag(tagDelete.tag_id);
+            closeModal();
+        }catch{
+            alert('Error al intentar eliminar la etiqueta');
         }
     };
 
@@ -90,7 +96,7 @@ export const TagManagement = () => {
                                         <td className="text-end px-4">
                                             <button className="btn btn-sm btn-outline-info me-2" onClick={() => openDetailModal(tag.tag_id)}><i className="bi bi-eye-fill"></i> Ver</button>
                                             <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => openFormModal(tag)}><i className="bi bi-pen-fill"></i> Editar</button>
-                                            <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(tag.tag_id)}><i className="bi bi-trash3-fill"></i> Eliminar</button>
+                                            <button className="btn btn-sm btn-outline-danger" onClick={() => openConfirmModal(tag)}><i className="bi bi-trash3-fill"></i> Eliminar</button>
                                         </td>
                                     </tr>
                                 ))}
@@ -101,7 +107,7 @@ export const TagManagement = () => {
             </div>
             <Modal 
                 isOpen={modalState.isOpen && modalState.type === 'form'} 
-                title={editingId ? 'Editar Categoria' : 'Crear Etiqueta'} 
+                title={editingId ? 'Editar Etiqueta' : 'Crear Etiqueta'} 
                 onClose={closeModal}
             >
                 <form onSubmit={handleSubmit}>
@@ -134,6 +140,39 @@ export const TagManagement = () => {
                     </div>
                 ) : (
                     <div className="text-center"><div className="spinner-border spinner-border-sm" /></div>
+                )}
+            </Modal>
+
+            <Modal 
+                isOpen={modalState.isOpen && modalState.type === 'delete'} 
+                title="Atencion!" 
+                onClose={closeModal}
+            >
+                {tagDelete && (
+                    <div>
+                        <div className="alert alert-warning">
+                            <p className="mb-0">
+                                Esta usted seguro de eliminar esta etiqueta? <br /> <i className="bi bi-tags-fill"></i> <strong>"{tagDelete.name_tag}"</strong>
+                            </p>
+                        </div>
+                        
+                        <div className="d-flex justify-content-end">
+                            <button 
+                                type="button" 
+                                className="btn btn-secondary me-2" 
+                                onClick={closeModal}
+                            >
+                                Cancelar
+                            </button>
+                            <button 
+                                type="button" 
+                                className="btn btn-danger" 
+                                onClick={handleDelete}
+                            >
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
                 )}
             </Modal>
         </div>
