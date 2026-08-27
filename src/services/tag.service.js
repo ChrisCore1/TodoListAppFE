@@ -1,7 +1,7 @@
-import { API_URL, HEADERS, handleResponse } from './service';
+import { HEADERS, handleResponse, URL_TAG } from './service';
 
 export const getAll = async () => {
-    const response = await fetch(`${API_URL}/tags`, {
+    const response = await fetch(URL_TAG, {
         method: 'GET',
         headers: HEADERS
     });
@@ -10,7 +10,7 @@ export const getAll = async () => {
 };
 
 export const create = async (tagData) => {
-    const response = await fetch(`${API_URL}/tags`, {
+    const response = await fetch(URL_TAG, {
         method: 'POST',
         headers: HEADERS,
         body: JSON.stringify(tagData),
@@ -19,7 +19,7 @@ export const create = async (tagData) => {
 };
 
 export const getOne = async (id) => {
-    const response = await fetch(`${API_URL}/tags/${id}`, {
+    const response = await fetch(URL_TAG + `/${id}`, {
         method: 'GET',
         headers: HEADERS
     });
@@ -28,7 +28,7 @@ export const getOne = async (id) => {
 };
 
 export const update = async (id, tagData) => {
-    const response = await fetch(`${API_URL}/tags/${id}`, {
+    const response = await fetch(URL_TAG + `/${id}`, {
         method: 'PUT',
         headers: HEADERS,
         body: JSON.stringify(tagData),
@@ -37,7 +37,7 @@ export const update = async (id, tagData) => {
 };
 
 export const deleteTag = async (id) => {
-    const response = await fetch(`${API_URL}/tags/${id}`, {
+    const response = await fetch(URL_TAG + `/${id}`, {
         method: 'DELETE',
         headers: HEADERS,
     });
