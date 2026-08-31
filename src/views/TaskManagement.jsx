@@ -5,11 +5,12 @@ import { useTags } from "../hooks/useTags";
 import { TaskFormModal } from "../components/tasks/TaskFormModal";
 
 export const TaskManagement = () => {
-    const { tasks, loading, addTask } = useTasks();
+    const { tasks, loading, addTask, editTask } = useTasks();
     const { categories } = useCategories();
     const { tags } = useTags();
 
     const [modalState, setModalState] = useState({ isOpen: false, type: 'none' });
+    const [editingId, setEditingId] = useState(null);
 
     const initialFormState = {
         title: '',
@@ -22,6 +23,7 @@ export const TaskManagement = () => {
 
     const openFormModal = (task = null) => {
         if(task){
+            setEditingId(task.task_id);
             setFormData({
                 title: task.title,
                 description: task.description || '',
@@ -30,6 +32,7 @@ export const TaskManagement = () => {
                 status: task.status === 1 || task.status === true
             });
         }else{
+            setEditingId(null);
             setFormData(initialFormState);
         }
         setModalState({ isOpen: true, type: 'form' });
@@ -44,10 +47,14 @@ export const TaskManagement = () => {
         if(!formData.title.trim()) return alert('El titulo de la tarea es obligatorio');
 
         try{
-            await addTask(formData);
+            if(editingId){
+                await editTask(editingId, formData);
+            }else{
+                await addTask(formData);
+            }
             closeModal();
         }catch(e){
-            alert('Error al guardar la tarea');
+            alert('Error al procesar la tarea');
         }
     };
 
@@ -57,6 +64,21 @@ export const TaskManagement = () => {
         const updatedTags = isSelect ? formData.tags.filter(id => id !== tagIdString) : [...formData.tags, tagIdString];
 
         setFormData({ ...formData, tags: updatedTags });
+    };
+
+    const handleTaskCheckbox = async (task) => {
+        const updateTaskStatus = {
+            title: task.title,
+            description: task.description || '',
+            category_id: task.category_id,
+            tags: task.tags ? task.tags.map(tag => tag.tag_id.toString()) : [],
+            status: !task.status
+        };
+        try{
+            await editTask(task.task_id, updateTaskStatus);
+        }catch(e){
+            alert('No se logro actualizar el estado de la tarea');
+        }
     };
 
     if (loading) return <div className="text-center mt-5"><div className="spinner-border text-primary" /></div>;
@@ -78,6 +100,7 @@ export const TaskManagement = () => {
                         <table className="table table-hover mb-0">
                             <thead className="table-dark">
                                 <tr>
+                                    <th className="px-4 text-center" style={{width: '60px'}}><i className="bi bi-check-square"></i></th>
                                     <th>Titulo</th>
                                     <th>Estado</th>
                                     <th className="text-end px-4">Acciones</th>
@@ -88,7 +111,17 @@ export const TaskManagement = () => {
                                     <tr><td colSpan="4" className="text-center py-4 text-muted">No hay tareas registradas</td></tr>
                                 ) : (
                                     tasks.map(task => (
-                                        <tr key={task.task_id}>
+                                        <tr key={task.task_id} className={task.status ? 'table-light text-muted' : ''}>
+                                            <td className="px-4 text-center align-middle">
+                                                <input 
+                                                    className="form-check-input"
+                                                    type="checkbox"
+                                                    checked={task.status === 1 || task.status === true}
+                                                    onChange={() => handleTaskCheckbox(task)}
+                                                    style={{ cursor: 'pointer', transform: 'scale(1.3' }}
+                                                    title={task.status ? 'Marcar como pendiente' : 'Marcar como realizada'}
+                                                />
+                                            </td>
                                             <td className="align-middle fw-medium">
                                                 <span style={{ textDecoration: task.status ? 'line-through' : 'none' }}>
                                                     {task.title}
@@ -101,7 +134,7 @@ export const TaskManagement = () => {
                                             </td>
                                             <td className="text-end px-4">
                                                 <button className="btn btn-sm btn-outline-info me-2"><i className="bi bi-eye-fill"></i> Ver</button>
-                                                <button className="btn btn-sm btn-outline-secondary me-2"><i className="bi bi-pen-fill"></i> Editar</button>
+                                                <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => openFormModal(task)}><i className="bi bi-pen-fill"></i> Editar</button>
                                                 <button className="btn btn-sm btn-outline-danger"><i className="bi bi-trash3-fill"></i> Eliminar</button>
                                             </td>
                                         </tr>
@@ -115,6 +148,7 @@ export const TaskManagement = () => {
 
             <TaskFormModal
                 isOpen={modalState.isOpen && modalState.type === 'form'}
+                isEditing={!!editingId}
                 onClose={closeModal}
                 onSubmit={handleSubmit}
                 formData={formData}

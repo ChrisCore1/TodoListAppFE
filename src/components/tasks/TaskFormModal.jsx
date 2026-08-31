@@ -2,6 +2,7 @@ import { Modal } from "../Modal";
 
 export const TaskFormModal = ({
     isOpen,
+    isEditing,
     onClose,
     onSubmit,
     formData,
@@ -13,7 +14,7 @@ export const TaskFormModal = ({
     return(
         <Modal 
             isOpen={isOpen} 
-            title={'Crear Tarea'} 
+            title={isEditing ? 'Editar Tarea' : 'Crear Tarea'} 
             onClose={onClose}
         >
             <form onSubmit={onSubmit}>
@@ -22,6 +23,7 @@ export const TaskFormModal = ({
                     <input 
                         type="text"
                         className="form-control"
+                        value={formData.title}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     />
                 </div>
@@ -31,6 +33,7 @@ export const TaskFormModal = ({
                     <textarea 
                         className="form-control" 
                         rows="3"
+                        value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })} 
                     />
                 </div>
@@ -40,6 +43,7 @@ export const TaskFormModal = ({
                         <label className="form-label">Seleccione una Categoria</label>
                         <select 
                             className="form-select" 
+                            value={formData.category_id}
                             onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
                         >
                             <option value="">Ninguna</option>
