@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { getAll, create, update, getOne } from "../services/task.service";
+import { getAll, create, update, getOne, deleteTask } from "../services/task.service";
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -35,5 +35,10 @@ export const useTasks = () => {
     return await getOne(id);
   };
 
-  return { tasks, loading, addTask, editTask, getTaskDetails };
+  const removeTask = async (id) => {
+    await deleteTask(id);
+    await fetchTasks();
+  };
+
+  return { tasks, loading, addTask, editTask, getTaskDetails, removeTask };
 };
