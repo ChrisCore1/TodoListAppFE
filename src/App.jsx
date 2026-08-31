@@ -3,6 +3,7 @@ import './App.css';
 import { Navbar } from './components/Navbar';
 import { CategoryManagement } from './views/CategoryManagement';
 import { TagManagement } from './views/TagManagement';
+import { TaskManagement } from './views/TaskManagement';
 
 function App() {
 
@@ -12,11 +13,7 @@ function App() {
         <Navbar />
         <div className='container'>
           <Routes>
-            <Route path='/tareas' element={
-              <div className='text-center mt-5'>
-                <h2>Lista de Tareas</h2>
-              </div>
-            } />
+            <Route path='/tareas' element={<TaskManagement />} />
 
             <Route path='/categorias' element={<CategoryManagement />} />
 
