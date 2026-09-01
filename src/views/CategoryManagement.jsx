@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useCategories } from "../hooks/useCategories";
 import { Modal } from "../components/Modal";
+import { Pagination } from "../components/Pagination";
 
 export const CategoryManagement = () => {
-    const { categories, loading, addCategory, editCategory, removeCategory, getCategoryDetails } = useCategories();
+    const { categories, loading, addCategory, editCategory, removeCategory, getCategoryDetails, currentPage, lastPage, changePage } = useCategories();
     const [modalState, setModalState] = useState({ isOpen: false, type: 'none' });
     const [formData, setFormData] = useState({ name_category: '' });
     const [editingId, setEditingId] = useState(null);
@@ -99,6 +100,11 @@ export const CategoryManagement = () => {
                             </tbody>
                         </table>
                     </div>
+                    <Pagination 
+                        currentPage={currentPage} 
+                        lastPage={lastPage} 
+                        onPageChange={changePage} 
+                    />
                 </div>
             </div>
             <Modal 

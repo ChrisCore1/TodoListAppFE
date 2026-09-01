@@ -1,12 +1,12 @@
 import { handleResponse, URL_TAG } from './service';
 import { fetchInterceptor } from '../utils/fetchInterceptor';
 
-export const getAll = async () => {
-    const response = await fetchInterceptor(URL_TAG, {
+export const getAll = async (page = 1) => {
+    const response = await fetchInterceptor(URL_TAG + `?page=${page}`, {
         method: 'GET',
     });
     const data = await handleResponse(response);
-    return data.tags?.data || data;
+    return data.tags || data;
 };
 
 export const create = async (tagData) => {

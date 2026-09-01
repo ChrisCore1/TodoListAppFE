@@ -4,12 +4,20 @@ import { getAll, create, getOne, update, deleteTag } from '../services/tag.servi
 export const useTags = () => {
     const [tags, setTags] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [lastPage, setLastPage] = useState(1);
 
-    const fetchTags = useCallback(async () => {
+    const fetchTags = useCallback(async (page = 1) => {
         setLoading(true);
         try{
-            const data = await getAll();
-            setTags(data || []);
+            const data = await getAll(page);
+            if (data && data.data) {
+                setTags(data.data);
+                setCurrentPage(data.current_page);
+                setLastPage(data.last_page);
+            }else{
+                setTags(data || []);
+            }
         }catch(e){
             setTags([]);
         }finally{
@@ -18,8 +26,14 @@ export const useTags = () => {
     }, []);
 
     useEffect(() => {
-        fetchTags();
-    }, [fetchTags]);
+        fetchTags(currentPage);
+    }, [fetchTags, currentPage]);
+
+    const changePage = (page) => {
+        if (page >= 1 && page <= lastPage) {
+            setCurrentPage(page);
+        }
+    };
 
     const addTag = async (tagData) => {
         await create(tagData);
@@ -40,5 +54,5 @@ export const useTags = () => {
         await fetchTags();
     };
 
-    return { tags, loading, addTag, getTagDetails, editTag, removeTag };
+    return { tags, loading, addTag, getTagDetails, editTag, removeTag, currentPage, lastPage, changePage };
 };

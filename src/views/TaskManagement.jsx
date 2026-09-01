@@ -5,9 +5,10 @@ import { useTags } from "../hooks/useTags";
 import { TaskFormModal } from "../components/tasks/TaskFormModal";
 import { TaskDetailModal } from "../components/tasks/TaskDetailModal";
 import { TaskDeleteModal } from "../components/tasks/TaskDeleteModal";
+import { Pagination } from "../components/Pagination";
 
 export const TaskManagement = () => {
-    const { tasks, loading, addTask, editTask, getTaskDetails, removeTask } = useTasks();
+    const { tasks, loading, addTask, editTask, getTaskDetails, removeTask, currentPage, lastPage, changePage } = useTasks();
     const { categories } = useCategories();
     const { tags } = useTags();
 
@@ -174,6 +175,11 @@ export const TaskManagement = () => {
                             </tbody>
                         </table>
                     </div>
+                    <Pagination 
+                        currentPage={currentPage} 
+                        lastPage={lastPage} 
+                        onPageChange={changePage} 
+                    />
                 </div>
             </div>
 

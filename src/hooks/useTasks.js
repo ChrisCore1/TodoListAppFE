@@ -4,12 +4,20 @@ import { getAll, create, update, getOne, deleteTask } from "../services/task.ser
 export const useTasks = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
 
-  const fetchTasks = useCallback(async () => {
+  const fetchTasks = useCallback(async (page = 1) => {
     setLoading(true);
     try{
-      const data = await getAll();
-      setTasks(data || []);
+      const data = await getAll(page);
+      if (data && data.data) {
+        setTasks(data.data);
+        setCurrentPage(data.current_page);
+        setLastPage(data.last_page);
+      }else{
+        setTasks(data || []);
+      }
     }catch(e){
       setTasks([]);
     }finally{
@@ -18,8 +26,14 @@ export const useTasks = () => {
   }, []);
 
   useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+    fetchTasks(currentPage);
+  }, [fetchTasks, currentPage]);
+
+  const changePage = (page) => {
+    if (page >= 1 && page <= lastPage) {
+        setCurrentPage(page);
+    }
+  };
 
   const addTask = async (taskData) => {
     await create(taskData);
@@ -40,5 +54,5 @@ export const useTasks = () => {
     await fetchTasks();
   };
 
-  return { tasks, loading, addTask, editTask, getTaskDetails, removeTask };
+  return { tasks, loading, addTask, editTask, getTaskDetails, removeTask, currentPage, lastPage, changePage };
 };

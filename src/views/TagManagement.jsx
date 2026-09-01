@@ -1,9 +1,10 @@
 import { use, useState } from "react";
 import { useTags } from "../hooks/useTags";
 import { Modal } from "../components/Modal";
+import { Pagination } from "../components/Pagination";
 
 export const TagManagement = () => {
-    const { tags, loading, addTag, getTagDetails, editTag, removeTag } = useTags();
+    const { tags, loading, addTag, getTagDetails, editTag, removeTag, currentPage, lastPage, changePage } = useTags();
     const [modalState, setModalState] = useState({ isOpen: false, type: 'none' });
     const [formData, setFormData] = useState({ name_tag: '' });
     const [detailTag, setDetailTag] = useState(null);
@@ -103,6 +104,11 @@ export const TagManagement = () => {
                             </tbody>
                         </table>
                     </div>
+                    <Pagination 
+                        currentPage={currentPage} 
+                        lastPage={lastPage} 
+                        onPageChange={changePage} 
+                    />
                 </div>
             </div>
             <Modal 
