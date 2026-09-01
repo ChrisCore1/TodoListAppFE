@@ -17,3 +17,12 @@ export const create = async (taskData) => {
   });
   return handleResponse(response);
 };
+
+export const update = async (id, taskData) => {
+  const response = await fetch(URL_TASK + `/${id}`, {
+    method: 'PUT',
+    headers: HEADERS,
+    body: JSON.stringify(taskData)
+  });
+  return handleResponse(response);
+};
