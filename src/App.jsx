@@ -9,6 +9,12 @@ import { Login } from './views/Login';
 function App() {
 
   const ProtectedLayout = () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      return <Navigate to="/login" replace />;
+    }
+    
     return(
       <>
         <Navbar />
