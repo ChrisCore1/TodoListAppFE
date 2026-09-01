@@ -3,14 +3,16 @@ import { useTasks } from "../hooks/useTasks";
 import { useCategories } from "../hooks/useCategories";
 import { useTags } from "../hooks/useTags";
 import { TaskFormModal } from "../components/tasks/TaskFormModal";
+import { TaskDetailModal } from "../components/tasks/TaskDetailModal";
 
 export const TaskManagement = () => {
-    const { tasks, loading, addTask, editTask } = useTasks();
+    const { tasks, loading, addTask, editTask, getTaskDetails } = useTasks();
     const { categories } = useCategories();
     const { tags } = useTags();
 
     const [modalState, setModalState] = useState({ isOpen: false, type: 'none' });
     const [editingId, setEditingId] = useState(null);
+    const [detailTask, setDetailTask] = useState(null);
 
     const initialFormState = {
         title: '',
@@ -38,8 +40,19 @@ export const TaskManagement = () => {
         setModalState({ isOpen: true, type: 'form' });
     };
 
+    const openDetailModal = async (id) => {
+        try{
+            const details = await getTaskDetails(id);
+            setDetailTask(details);
+            setModalState({ isOpen: true, type: 'detail' });
+        }catch(e){
+            alert('No se pudo cargar la informacion de la tarea');
+        }
+    };
+
     const closeModal = () => {
         setModalState({ isOpen: false, type: 'none' });
+        setDetailTask(null);
     };
 
     const handleSubmit = async (e) => {
@@ -133,7 +146,7 @@ export const TaskManagement = () => {
                                                 </span>
                                             </td>
                                             <td className="text-end px-4">
-                                                <button className="btn btn-sm btn-outline-info me-2"><i className="bi bi-eye-fill"></i> Ver</button>
+                                                <button className="btn btn-sm btn-outline-info me-2" onClick={() => openDetailModal(task.task_id)}><i className="bi bi-eye-fill"></i> Ver</button>
                                                 <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => openFormModal(task)}><i className="bi bi-pen-fill"></i> Editar</button>
                                                 <button className="btn btn-sm btn-outline-danger"><i className="bi bi-trash3-fill"></i> Eliminar</button>
                                             </td>
@@ -156,6 +169,13 @@ export const TaskManagement = () => {
                 categories={categories}
                 tags={tags}
                 handleTagSelect={handleTagSelect}
+            />
+
+            <TaskDetailModal 
+                isOpen={modalState.isOpen && modalState.type === 'detail'}
+                task={detailTask}
+                categories={categories}
+                onClose={closeModal}
             />
         </div>
     );

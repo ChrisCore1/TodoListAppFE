@@ -26,3 +26,12 @@ export const update = async (id, taskData) => {
   });
   return handleResponse(response);
 };
+
+export const getOne = async (id) => {
+  const response = await fetch(URL_TASK + `/${id}`, {
+    method: 'GET',
+    headers: HEADERS
+  });
+  const data = await handleResponse(response);
+  return data.task || data;
+};
