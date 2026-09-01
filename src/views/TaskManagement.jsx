@@ -4,15 +4,17 @@ import { useCategories } from "../hooks/useCategories";
 import { useTags } from "../hooks/useTags";
 import { TaskFormModal } from "../components/tasks/TaskFormModal";
 import { TaskDetailModal } from "../components/tasks/TaskDetailModal";
+import { TaskDeleteModal } from "../components/tasks/TaskDeleteModal";
 
 export const TaskManagement = () => {
-    const { tasks, loading, addTask, editTask, getTaskDetails } = useTasks();
+    const { tasks, loading, addTask, editTask, getTaskDetails, removeTask } = useTasks();
     const { categories } = useCategories();
     const { tags } = useTags();
 
     const [modalState, setModalState] = useState({ isOpen: false, type: 'none' });
     const [editingId, setEditingId] = useState(null);
     const [detailTask, setDetailTask] = useState(null);
+    const [taskDelete, setTaskDelete] = useState(null);
 
     const initialFormState = {
         title: '',
@@ -50,9 +52,15 @@ export const TaskManagement = () => {
         }
     };
 
+    const openConfirmDeleteModal = (task) => {
+        setTaskDelete(task);
+        setModalState({ isOpen: true, type: 'delete' });
+    };
+
     const closeModal = () => {
         setModalState({ isOpen: false, type: 'none' });
         setDetailTask(null);
+        setTaskDelete(null);
     };
 
     const handleSubmit = async (e) => {
@@ -68,6 +76,16 @@ export const TaskManagement = () => {
             closeModal();
         }catch(e){
             alert('Error al procesar la tarea');
+        }
+    };
+
+    const handleDelete = async () => {
+        if(!taskDelete) return;
+        try{
+            await removeTask(taskDelete.task_id);
+            closeModal();
+        }catch(e){
+            alert('Error al intentar eliminar la tarea');
         }
     };
 
@@ -148,7 +166,7 @@ export const TaskManagement = () => {
                                             <td className="text-end px-4">
                                                 <button className="btn btn-sm btn-outline-info me-2" onClick={() => openDetailModal(task.task_id)}><i className="bi bi-eye-fill"></i> Ver</button>
                                                 <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => openFormModal(task)}><i className="bi bi-pen-fill"></i> Editar</button>
-                                                <button className="btn btn-sm btn-outline-danger"><i className="bi bi-trash3-fill"></i> Eliminar</button>
+                                                <button className="btn btn-sm btn-outline-danger" onClick={() => openConfirmDeleteModal(task)}><i className="bi bi-trash3-fill"></i> Eliminar</button>
                                             </td>
                                         </tr>
                                     ))
@@ -176,6 +194,13 @@ export const TaskManagement = () => {
                 task={detailTask}
                 categories={categories}
                 onClose={closeModal}
+            />
+
+            <TaskDeleteModal 
+                isOpen={modalState.isOpen && modalState.type === 'delete'}
+                task={taskDelete}
+                onClose={closeModal}
+                onConfirm={handleDelete}
             />
         </div>
     );

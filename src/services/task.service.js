@@ -35,3 +35,12 @@ export const getOne = async (id) => {
   const data = await handleResponse(response);
   return data.task || data;
 };
+
+export const deleteTask = async (id) => {
+  const response = await fetch(URL_TASK + `/${id}`, {
+    method: 'DELETE',
+    headers: HEADERS
+  });
+  const data = await handleResponse(response);
+  return data.task || data;
+};
