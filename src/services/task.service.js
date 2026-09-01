@@ -1,24 +1,19 @@
-const API_URL = 'http://localhost:8000/api';
+import { HEADERS, handleResponse, URL_TASK } from "./service";
 
 export const getAll = async () => {
-  try{
-    const response = await fetch(`${API_URL}/tasks`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-    });
+  const response = await fetch(URL_TASK, {
+    method: 'GET',
+    headers: HEADERS
+  });
+  const data = await handleResponse(response);
+  return data.tasks?.data || data;
+};
 
-    if(!response.ok){
-      throw new Error(`Error con la peticion: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data;
-
-  }catch (e){
-    console.error('Error al obtener las tareas: ', e);
-    throw e;
-  }
+export const create = async (taskData) => {
+  const response = await fetch(URL_TASK, {
+    method: 'POST',
+    headers: HEADERS,
+    body: JSON.stringify(taskData),
+  });
+  return handleResponse(response);
 };
