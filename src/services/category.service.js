@@ -1,4 +1,4 @@
-import { URL_CATEGORY, HEADERS, handleResponse } from './service'
+import { URL_CATEGORY, handleResponse } from './service'
 import { fetchInterceptor } from '../utils/fetchInterceptor';
 
 export const getAll = async () => {
