@@ -37,12 +37,12 @@ export const useTasks = () => {
 
   const addTask = async (taskData) => {
     await create(taskData);
-    await fetchTasks();
+    await fetchTasks(currentPage);
   };
 
   const editTask = async (id, taskData) => {
     await update(id, taskData);
-    await fetchTasks();
+    await fetchTasks(currentPage);
   };
 
   const getTaskDetails = async (id) => {
@@ -51,7 +51,10 @@ export const useTasks = () => {
 
   const removeTask = async (id) => {
     await deleteTask(id);
-    await fetchTasks();
+    const pageToFetch = (tasks.length === 1 && currentPage > 1) 
+    ? currentPage - 1 
+    : currentPage;
+    await fetchTasks(pageToFetch);
   };
 
   return { tasks, loading, addTask, editTask, getTaskDetails, removeTask, currentPage, lastPage, changePage };

@@ -38,17 +38,20 @@ export const useCategories = () => {
 
     const addCategory = async (categoryData) => {
         await create(categoryData);
-        await fetchCategories();
+        await fetchCategories(currentPage);
     };
 
     const editCategory = async (id, categoryData) => {
         await update(id, categoryData);
-        await fetchCategories();
+        await fetchCategories(currentPage);
     }
 
     const removeCategory = async (id) => {
         await deleteCategory(id);
-        await fetchCategories();
+        const pageToFetch = (categories.length === 1 && currentPage > 1) 
+        ? currentPage - 1 
+        : currentPage;
+        await fetchCategories(pageToFetch);
     };
 
     const getCategoryDetails = async (id) => {

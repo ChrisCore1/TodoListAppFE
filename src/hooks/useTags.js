@@ -37,7 +37,7 @@ export const useTags = () => {
 
     const addTag = async (tagData) => {
         await create(tagData);
-        await fetchTags();
+        await fetchTags(currentPage);
     };
 
     const getTagDetails = async (id) => {
@@ -46,12 +46,15 @@ export const useTags = () => {
 
     const editTag = async (id, tagData) => {
         await update(id, tagData);
-        await fetchTags();
+        await fetchTags(currentPage);
     };
 
     const removeTag = async (id) => {
         await deleteTag(id);
-        await fetchTags();
+        const pageToFetch = (tags.length === 1 && currentPage > 1) 
+        ? currentPage - 1 
+        : currentPage;
+        await fetchTags(pageToFetch);
     };
 
     return { tags, loading, addTag, getTagDetails, editTag, removeTag, currentPage, lastPage, changePage };
