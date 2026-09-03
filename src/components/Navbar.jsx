@@ -1,6 +1,15 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        if(window.confirm('Confirma si deseas cerrar sesion')){
+            localStorage.removeItem('token');
+            navigate('/login');
+        }
+    };
+
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
             <div className="container">
@@ -35,6 +44,12 @@ export const Navbar = () => {
                             </NavLink>
                         </li>
                     </ul>
+                    <button 
+                        onClick={handleLogout} 
+                        className="btn btn-outline-danger btn-sm"
+                    >
+                        Cerrar Sesión
+                    </button>
                 </div>
             </div>
         </nav>
