@@ -1,45 +1,41 @@
-import { HEADERS, handleResponse, URL_TASK } from "./service";
+import { handleResponse, URL_TASK } from "./service";
+import { fetchInterceptor } from "../utils/fetchInterceptor";
 
 export const getAll = async () => {
-  const response = await fetch(URL_TASK, {
+  const response = await fetchInterceptor(URL_TASK, {
     method: 'GET',
-    headers: HEADERS
   });
   const data = await handleResponse(response);
   return data.tasks?.data || data;
 };
 
 export const create = async (taskData) => {
-  const response = await fetch(URL_TASK, {
+  const response = await fetchInterceptor(URL_TASK, {
     method: 'POST',
-    headers: HEADERS,
     body: JSON.stringify(taskData),
   });
   return handleResponse(response);
 };
 
 export const update = async (id, taskData) => {
-  const response = await fetch(URL_TASK + `/${id}`, {
+  const response = await fetchInterceptor(URL_TASK + `/${id}`, {
     method: 'PUT',
-    headers: HEADERS,
     body: JSON.stringify(taskData)
   });
   return handleResponse(response);
 };
 
 export const getOne = async (id) => {
-  const response = await fetch(URL_TASK + `/${id}`, {
+  const response = await fetchInterceptor(URL_TASK + `/${id}`, {
     method: 'GET',
-    headers: HEADERS
   });
   const data = await handleResponse(response);
   return data.task || data;
 };
 
 export const deleteTask = async (id) => {
-  const response = await fetch(URL_TASK + `/${id}`, {
+  const response = await fetchInterceptor(URL_TASK + `/${id}`, {
     method: 'DELETE',
-    headers: HEADERS
   });
   const data = await handleResponse(response);
   return data.task || data;

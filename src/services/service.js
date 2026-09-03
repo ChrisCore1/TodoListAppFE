@@ -1,5 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL;
 const URL_TAG = `${API_URL}/tags`;
+const URL_CATEGORY = `${API_URL}/categories`;
 const URL_TASK = `${API_URL}/tasks`;
 const URL_LOGIN = `${API_URL}/login`;
 
@@ -22,4 +23,4 @@ const handleResponse = async (response) => {
     }
 };
 
-export { API_URL, HEADERS, handleResponse, URL_TAG, URL_TASK, URL_LOGIN };
+export { API_URL, HEADERS, handleResponse, URL_TAG, URL_CATEGORY, URL_TASK, URL_LOGIN };
