@@ -1,12 +1,12 @@
 import { URL_CATEGORY, handleResponse } from './service'
 import { fetchInterceptor } from '../utils/fetchInterceptor';
 
-export const getAll = async () => {
-    const response = await fetchInterceptor(URL_CATEGORY, {
+export const getAll = async (page = 1) => {
+    const response = await fetchInterceptor(URL_CATEGORY + `?page=${page}`, {
         method: 'GET',
     });
     const data = await handleResponse(response);
-    return data.categories?.data || data;
+    return data.categories || data;
 };
 
 export const create = async (categoryData) => {
